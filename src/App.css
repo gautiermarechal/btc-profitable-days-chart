@@ -1,0 +1,11 @@
+.App {
+  text-align: center;
+}
+
+.Main {
+  display: flex;
+  margin-left: 20px;
+  margin-right: 20px;
+  align-items: center;
+}
+
