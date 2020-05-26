@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import {AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Brush} from 'recharts';
+import './App.css';
+import {AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Brush, Legend} from 'recharts';
 import axios from 'axios';
 
 export default function ProfitableDaysChart(){
     const [data, setData] = useState([]);
     const [formattedData, setformattedData] = useState([]);
-    const staticData = [];
+    let staticData = [];
 
     useEffect(() => {
         axios.get('https://min-api.cryptocompare.com/data/v2/histoday?fsym=BTC&tsym=USD&allData=true&api_key=c76391cf666cfdd3dfdb8e3e1dcd057c7efb42524f94d5fb1f6e86895c1ddd7f')
@@ -25,54 +26,99 @@ export default function ProfitableDaysChart(){
 
                 staticData.push({
                     Price: response.data.Data.Data[i].close,
-                    time: time
+                    Loss_Price: 0,
+                    time: time,
+                    isProfit: null
                 })
+            }
+            for(let i = 0; i <= staticData.length - 1; i++){
+                const currentPrice = staticData[staticData.length - 1].Price;
+                //Profit Day
+                if(staticData[i].Price <= currentPrice){
+                    staticData[i].isProfit = true;
+                }
+                //Loss Day
+                else{
+                    console.log(staticData[i].isProfit)
+                    staticData[i].Loss_Price = staticData[i].Price;
+                    staticData[i].Price = 0;
+                    staticData[i].isProfit = false;
+                }
             }
             setformattedData(staticData);
 
         })
+
+        
     }
     ,[]);
 
-    const getProfitableDays = () => {
-        if(formattedData.length === 0){
-            return;
-        }
-        else{
-        const currentPrice = formattedData[formattedData.length - 1].Price;
-        for(let i = 0; i < formattedData.length - 1; i++){
-            console.log("Hello 123");
-            if(formattedData[i].Price < currentPrice){
-                console.log("Hello" + formattedData.length);
-                return 1;
+    function CustomTooltip({active, payload, label}){
+        if(active){
+            // console.log(payload);
+            if(payload[0].value === 0){
+                return (
+                <div className="custom-tooltip-profit">
+                <p>BTC/USD Price {` : ${payload[1].value}`} $</p>
+                <p>Date and Time {` : ${payload[1].payload.time}`} </p>
+                </div>
+                );
             }
-            else{
-                console.log("Hello 0");
-                return 0;
+            else if(payload[1].value === 0){
+                return (
+                    <div className="custom-tooltip-loss">
+                    <p>BTC/USD Price {` : ${payload[0].value}`} $</p>
+                    <p>Date and Time {` : ${payload[0].payload.time}`} </p>
+                    </div>
+                    );
             }
         }
-        }
-    }
+        return null;
+    };
 
-    const profitableDays = getProfitableDays();
+    const CustomLegend = function CustomLegend(props){
+
+        const totalDays = formattedData.length;
+
+        let lossDays = 0;
+        let profitDays = 0;
+        let percentProfitDays = 0;
+
+        for(let i = 0; i <= formattedData.length - 1; i++){
+            if(formattedData[i].isProfit){
+                profitDays++;
+            }
+            else if(!formattedData[i].isProfit){
+                lossDays++;
+            }
+        }
+
+        percentProfitDays = (profitDays / totalDays) * 100;
+
+
+
+        return(
+            <div>
+                <p>Total of Days: {`${totalDays}`}</p>
+                <p>Total of Profit Days: {`${profitDays}`}</p>
+                <p>Total of Loss Days: {`${lossDays}`}</p>
+                <p>Percentage of Profitable Days: {`${percentProfitDays}`}</p>
+            </div>
+        );
+    };
+
+    
+    
 
     return (
-        <AreaChart width={1200} height={600} data={formattedData} margin={{top: 5, right: 20, bottom: 5, left: 0}}>
-            <defs>
-                
-                    {formattedData.map((props) => (
-                        <linearGradient id="profitColor" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset={profitableDays} stopColor="green" stopOpacity={1}></stop>
-                        <stop offset={profitableDays} stopColor="red" stopOpacity={1}></stop>
-                        </linearGradient>
-                    ))}
-                
-            </defs>
-            <Area type="monotone" dataKey="Price" stroke="#29AB87" fill="url(#profitColor)"/>
+        <AreaChart width={1200} height={600} data={formattedData} margin={{top: 5, right: 20, bottom: 5, left: 0}} >
             <CartesianGrid stroke="#ccc" strokeDasharray="3 3"/>
             <XAxis dataKey="time" name="time" label="Time"/>
             <YAxis label="BTC/USD Price"/>
-            <Tooltip/>
+            <Tooltip content={CustomTooltip}/>
+            <Legend content={<CustomLegend/>}/>
+            <Area type="step" dataKey={"Loss_Price"} stroke="#DD0C05" fill="#DD0C05"/>
+            <Area type="step" dataKey="Price" stroke="#29AB87" fill="#0FDD05"/>
             <Brush/>
         </AreaChart>
     );

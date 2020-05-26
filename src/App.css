@@ -9,3 +9,15 @@
   align-items: center;
 }
 
+.custom-tooltip-profit{
+  background-color: rgb(170, 255, 193);
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.custom-tooltip-loss{
+  background-color: rgb(252, 175, 177);
+  padding: 10px;
+  border-radius: 10px;
+}
+
