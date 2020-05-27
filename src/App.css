@@ -1,5 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Inconsolata:wght@500&display=swap');
 .App {
   text-align: center;
+  font-family: 'Inconsolata', monospace;
 }
 
 .Main {
@@ -19,6 +21,18 @@
 
 .chart{
   position: relative;
+}
+
+.red-box{
+  background-color: #D75C5E ;
+  padding: 10px ;
+  border: 1px solid #DD0C05 ;
+}
+
+.green-box{
+  background-color: #65D664;
+  padding: 10px ;
+  border: 1px solid #29AB87 ;
 }
 
 .custom-tooltip-profit{
