@@ -96,8 +96,8 @@ export default function ProfitableDaysChart(){
 
         return(
             <div className="legend">
-                <p>Profitable: <div className="red-box"></div></p>
-                <p>Non-Profitable: <div className="green-box"></div></p>
+                <p>Profitable: <div className="green-box"></div></p>
+                <p>Non-Profitable: <div className="red-box"></div></p>
                 <p>Total of Days: {`${totalDays}`}</p>
                 <p>Total of Profit Days: {`${profitDays}`}</p>
                 <p>Total of Loss Days: {`${lossDays}`}</p>
