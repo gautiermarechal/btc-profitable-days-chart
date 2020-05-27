@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
-import {AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Brush, Legend} from 'recharts';
+import {AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Brush, Legend, ResponsiveContainer} from 'recharts';
 import axios from 'axios';
 
 export default function ProfitableDaysChart(){
@@ -19,10 +19,7 @@ export default function ProfitableDaysChart(){
                 let year = a.getFullYear();
                 let month = months[a.getMonth()];
                 let date = a.getDate();
-                let hour = a.getHours();
-                let min = a.getMinutes();
-                let sec = a.getSeconds();
-                let time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + '0:' + sec + "0" ;
+                let time = date + ' ' + month + ' ' + year + ' ';
 
                 staticData.push({
                     Price: response.data.Data.Data[i].close,
@@ -60,7 +57,7 @@ export default function ProfitableDaysChart(){
                 return (
                 <div className="custom-tooltip-profit">
                 <p>BTC/USD Price {` : ${payload[1].value}`} $</p>
-                <p>Date and Time {` : ${payload[1].payload.time}`} </p>
+                <p>Date {` : ${payload[1].payload.time}`} </p>
                 </div>
                 );
             }
@@ -68,7 +65,7 @@ export default function ProfitableDaysChart(){
                 return (
                     <div className="custom-tooltip-loss">
                     <p>BTC/USD Price {` : ${payload[0].value}`} $</p>
-                    <p>Date and Time {` : ${payload[0].payload.time}`} </p>
+                    <p>Date{` : ${payload[0].payload.time}`} </p>
                     </div>
                     );
             }
@@ -98,28 +95,28 @@ export default function ProfitableDaysChart(){
 
 
         return(
-            <div>
+            <div className="legend">
                 <p>Total of Days: {`${totalDays}`}</p>
                 <p>Total of Profit Days: {`${profitDays}`}</p>
                 <p>Total of Loss Days: {`${lossDays}`}</p>
-                <p>Percentage of Profitable Days: {`${percentProfitDays}`}</p>
+                <p>% of Profitable Days: {`${percentProfitDays.toFixed(2)} %`}</p>
             </div>
         );
     };
-
-    
     
 
     return (
-        <AreaChart width={1200} height={600} data={formattedData} margin={{top: 5, right: 20, bottom: 5, left: 0}} >
+        // <ResponsiveContainer width={1200} height="80%">
+        <AreaChart width={1200} height={800} data={formattedData} margin={{top: 50, right: 20, bottom: 5, left: 20}} className="chart">
             <CartesianGrid stroke="#ccc" strokeDasharray="3 3"/>
-            <XAxis dataKey="time" name="time" label="Time"/>
-            <YAxis label="BTC/USD Price"/>
+            <XAxis dataKey="time" name="time"/>
+            <YAxis label={{ value: 'BTC/USD Price', position: 'left', angle: -90}}/>
             <Tooltip content={CustomTooltip}/>
-            <Legend content={<CustomLegend/>}/>
+            <Legend content={<CustomLegend/>} className="legend-container"/>
             <Area type="step" dataKey={"Loss_Price"} stroke="#DD0C05" fill="#DD0C05"/>
             <Area type="step" dataKey="Price" stroke="#29AB87" fill="#0FDD05"/>
-            <Brush/>
+            <Brush width={1000} dataKey="time"/>
         </AreaChart>
+        // </ResponsiveContainer>
     );
 }

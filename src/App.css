@@ -3,10 +3,22 @@
 }
 
 .Main {
-  display: flex;
+  display: inline-block;
   margin-left: 20px;
   margin-right: 20px;
   align-items: center;
+  position: relative;
+}
+
+.Description{
+  margin-left: 300px;
+  margin-right: 300px;
+  margin-bottom: 50px;
+  line-height: 1.5;
+}
+
+.chart{
+  position: relative;
 }
 
 .custom-tooltip-profit{
@@ -21,3 +33,25 @@
   border-radius: 10px;
 }
 
+.legend-container{
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.legend{
+  background-color: snow;
+  border-radius: 10px;
+  width: 300px;
+  margin: auto;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  padding: 20px;
+  left: 50%;
+  vertical-align: middle;
+  transition: 0.3s;
+  text-align: left;
+}
+.legend:hover{
+  box-shadow: 0 10px 16px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+}
